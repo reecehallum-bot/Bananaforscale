@@ -179,6 +179,19 @@
     input[type=number]::-webkit-outer-spin-button { -webkit-appearance: none; }
     input[type=number]:focus { border-color: var(--banana-dark); box-shadow: 0 0 0 3px rgba(245,197,24,0.3); }
 
+    .unit-wrap {
+      display: flex;
+      flex-direction: column;
+      gap: 0.2rem;
+    }
+    .unit-label {
+      font-size: 0.72rem;
+      font-weight: 600;
+      color: #888;
+      text-transform: uppercase;
+      letter-spacing: 0.4px;
+      padding-left: 0.2rem;
+    }
     select {
       padding: 0.75rem 0.6rem;
       border: 2px solid #1a1a1a;
@@ -346,14 +359,17 @@
 
   <p class="mode-label">What are you converting?</p>
   <div class="mode-toggle">
-    <button class="mode-btn active" id="modeForward" onclick="setMode('forward')">📏 To Bananas</button>
-    <button class="mode-btn" id="modeReverse" onclick="setMode('reverse')">🍌 To Length</button>
+    <button class="mode-btn active" id="modeForward" onclick="setMode('forward')">📏 Length → 🍌</button>
+    <button class="mode-btn" id="modeReverse" onclick="setMode('reverse')">🍌 Bananas → 📏</button>
   </div>
 
   <label class="input-label" id="inputLabel">Enter a length</label>
   <div class="input-row">
     <input type="number" id="valueInput" placeholder="e.g. 180" min="0" autofocus />
-    <select id="unitSelect"></select>
+    <div class="unit-wrap">
+      <span class="unit-label" id="unitLabel">Unit</span>
+      <select id="unitSelect"></select>
+    </div>
   </div>
 
   <button class="convert-btn" id="convertBtn" onclick="calculate()">🍌 CONVERT 🍌</button>
@@ -474,9 +490,10 @@
     document.getElementById('modeForward').classList.toggle('active', m === 'forward');
     document.getElementById('modeReverse').classList.toggle('active', m === 'reverse');
     document.getElementById('inputLabel').textContent = m === 'forward' ? 'Enter a length' : 'How many bananas?';
+    document.getElementById('unitLabel').textContent = m === 'forward' ? 'Unit' : 'Output unit';
     document.getElementById('valueInput').placeholder = m === 'forward' ? 'e.g. 180' : 'e.g. 10';
     document.getElementById('convertBtn').textContent = m === 'forward' ? '🍌 CONVERT 🍌' : '📏 TO LENGTH 📏';
-    document.getElementById('stripLabel').textContent = m === 'forward' ? 'Visualised:' : "That's:";
+    document.getElementById('stripLabel').textContent = m === 'forward' ? 'Visualised:' : 'Visualised:';
     hideResult();
   }
 
@@ -569,7 +586,7 @@
 
       document.getElementById('resultHeadline').textContent = headFn(fmt(val), unitLabels[unit], lFmt);
       document.getElementById('resultFlavour').textContent = reverseFlavour[idx % reverseFlavour.length];
-      document.getElementById('bananaStrip').innerHTML = `<span class="banana-big">📏 ${lFmt} ${unitLabels[unit]}</span>`;
+      renderStrip(val);
       document.getElementById('trivia').textContent = triviaText;
       history.replaceState(null, '', `?v=${val}&u=${encodeURIComponent(unit)}&m=r`);
       window._lastResult = { mode: 'reverse', val, unit, length: lFmt };
