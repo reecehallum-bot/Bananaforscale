@@ -117,17 +117,6 @@
       margin-bottom: 0.4rem;
     }
 
-    /* Strip label */
-    .strip-label {
-      font-size: 0.78rem;
-      font-weight: 600;
-      color: #888;
-      text-transform: uppercase;
-      letter-spacing: 0.5px;
-      margin-top: 0.9rem;
-      margin-bottom: 0.3rem;
-    }
-
     /* Mode toggle */
     .mode-toggle {
       display: flex;
@@ -178,19 +167,9 @@
       line-height: 1.3;
       text-align: center;
     }
-    .variety-btn .variety-size {
-      display: block;
-      font-size: 0.65rem;
-      font-weight: 400;
-      color: #999;
-      margin-top: 1px;
-    }
     .variety-btn.active {
       background: #1a1a1a;
       color: var(--banana);
-    }
-    .variety-btn.active .variety-size {
-      color: #c8a800;
     }
 
     /* Input area */
@@ -301,25 +280,41 @@
       margin-top: 0.25rem;
       font-style: italic;
     }
-    .banana-strip {
-      margin-top: 0.9rem;
-      padding: 0.75rem;
-      background: var(--banana-light);
+    /* Methodology accordion */
+    .method-box {
+      margin-bottom: 1.1rem;
       border: 2px solid #1a1a1a;
       border-radius: 10px;
-      font-size: 1.5rem;
-      line-height: 1.5;
-      word-break: break-all;
-      min-height: 3rem;
+      background: #fff9e0;
+      font-size: 0.82rem;
+    }
+    .method-box summary {
+      padding: 0.55rem 0.8rem;
+      font-weight: 700;
+      font-size: 0.8rem;
+      color: #555;
+      text-transform: uppercase;
+      letter-spacing: 0.4px;
+      cursor: pointer;
+      list-style: none;
       display: flex;
       align-items: center;
+      gap: 0.4rem;
     }
-    .banana-big {
-      font-family: 'Bangers', cursive;
-      font-size: 1.3rem;
-      letter-spacing: 1px;
-      color: #1a1a1a;
+    .method-box summary::before { content: '▸'; font-size: 0.7rem; transition: transform 0.2s; }
+    .method-box[open] summary::before { transform: rotate(90deg); }
+    .method-box summary::-webkit-details-marker { display: none; }
+    .method-body {
+      padding: 0 0.9rem 0.8rem;
+      border-top: 1px solid #e8d98a;
+      color: #444;
+      line-height: 1.5;
     }
+    .method-body p { margin: 0.5rem 0; }
+    .method-body ul { margin: 0.4rem 0 0.4rem 1.1rem; padding: 0; }
+    .method-body li { margin-bottom: 0.35rem; }
+    .method-sources { font-size: 0.76rem; color: #888; margin-top: 0.6rem !important; }
+    .method-sources a { color: #666; }
 
     /* Trivia box */
     .trivia {
@@ -403,11 +398,25 @@
 
   <p class="mode-label">Banana variety</p>
   <div class="variety-toggle">
-    <button class="variety-btn active" data-variety="cavendish" onclick="setVariety('cavendish')">Cavendish<span class="variety-size">7 in</span></button>
-    <button class="variety-btn" data-variety="ladyfinger" onclick="setVariety('ladyfinger')">Lady Finger<span class="variety-size">4.5 in</span></button>
-    <button class="variety-btn" data-variety="plantain" onclick="setVariety('plantain')">Plantain<span class="variety-size">10 in</span></button>
-    <button class="variety-btn" data-variety="red" onclick="setVariety('red')">Red Banana<span class="variety-size">6 in</span></button>
+    <button class="variety-btn active" data-variety="cavendish" onclick="setVariety('cavendish')">Cavendish</button>
+    <button class="variety-btn" data-variety="ladyfinger" onclick="setVariety('ladyfinger')">Lady Finger</button>
+    <button class="variety-btn" data-variety="plantain" onclick="setVariety('plantain')">Plantain</button>
+    <button class="variety-btn" data-variety="red" onclick="setVariety('red')">Red Banana</button>
   </div>
+
+  <details class="method-box">
+    <summary>How we measure bananas</summary>
+    <div class="method-body">
+      <p><strong>Lengths are measured along the outer curve</strong> from blossom end to tip — the USDA standard for grading.</p>
+      <ul>
+        <li><strong>Cavendish — 17.78 cm (7 in):</strong> USDA medium grade. The world's most-consumed banana and the de facto "banana for scale" internet standard.</li>
+        <li><strong>Lady Finger — 11.4 cm (4.5 in):</strong> Midpoint of the typical 10–13 cm retail range for <em>Musa acuminata</em> 'Lady Finger'.</li>
+        <li><strong>Plantain — 25.4 cm (10 in):</strong> Conservative midpoint of the 20–30 cm grocery-store range for cooking plantains.</li>
+        <li><strong>Red Banana — 15.2 cm (6 in):</strong> Typical retail length for <em>Musa acuminata</em> 'Red Dacca'.</li>
+      </ul>
+      <p class="method-sources">Sources: <a href="https://www.ams.usda.gov/grades-standards/bananas-inspection-instructions" target="_blank" rel="noopener">USDA AMS Banana Inspection Instructions</a> · <a href="https://specialtyproduce.com/produce/Lady_Finger_Bananas_14422.php" target="_blank" rel="noopener">Specialty Produce</a> · <a href="https://www.producemarketguide.com/produce/bananas/burro-bananas" target="_blank" rel="noopener">Produce Market Guide</a></p>
+    </div>
+  </details>
 
   <label class="input-label" id="inputLabel">Enter a length</label>
   <div class="input-row">
@@ -423,8 +432,6 @@
   <div class="result" id="result" aria-live="polite">
     <div class="result-headline" id="resultHeadline"></div>
     <div class="result-flavour" id="resultFlavour"></div>
-    <p class="strip-label" id="stripLabel">Visualised:</p>
-    <div class="banana-strip" id="bananaStrip"></div>
     <div class="trivia" id="trivia"></div>
     <div class="divider"></div>
     <div class="share-row">
@@ -479,7 +486,7 @@
     'Give or take a peel.',
     'Roughly a small bunch and a bit.',
     "The internet's most trusted unit of measurement.",
-    'Scientists hate this one weird trick.',
+    'The peel accounts for roughly 35% of total banana weight.',
     'Results may vary depending on banana curvature.',
     'We accept no liability for banana-related injuries.',
     'Certified organic measurement.',
@@ -504,7 +511,7 @@
   const trivia = [
     'A banana grows pointing upward — it\'s called negative geotropism.',
     'Bananas are technically berries. Strawberries are not.',
-    'The average banana is 18–20 cm long. We use 18 cm here. Science.',
+    'A medium Cavendish is 17.78 cm (7 in) — the USDA standard and the internet\'s official banana-for-scale.',
     'Humans share about 50% of their DNA with bananas.',
     'A cluster of bananas is called a hand. One banana is a finger.',
     'Bananas float in water. Most fruits don\'t.',
@@ -545,7 +552,6 @@
     document.getElementById('unitLabel').textContent = m === 'forward' ? 'Unit' : 'Output unit';
     document.getElementById('valueInput').placeholder = m === 'forward' ? 'e.g. 180' : 'e.g. 10';
     document.getElementById('convertBtn').textContent = m === 'forward' ? '🍌 CONVERT 🍌' : '📏 TO LENGTH 📏';
-    document.getElementById('stripLabel').textContent = m === 'forward' ? 'Visualised:' : 'Visualised:';
     hideResult();
   }
 
@@ -634,7 +640,6 @@
 
       document.getElementById('resultHeadline').textContent = forwardHeadlines[idx % forwardHeadlines.length](bFmt);
       document.getElementById('resultFlavour').textContent = flavour[idx % flavour.length];
-      renderStrip(bananas);
       document.getElementById('trivia').textContent = triviaText;
       history.replaceState(null, '', `?v=${val}&u=${encodeURIComponent(unit)}`);
       window._lastResult = { mode: 'forward', val, unit, bananas: bFmt };
@@ -646,7 +651,6 @@
 
       document.getElementById('resultHeadline').textContent = headFn(fmt(val), unitLabels[unit], lFmt);
       document.getElementById('resultFlavour').textContent = reverseFlavour[idx % reverseFlavour.length];
-      renderStrip(val);
       document.getElementById('trivia').textContent = triviaText;
       history.replaceState(null, '', `?v=${val}&u=${encodeURIComponent(unit)}&m=r`);
       window._lastResult = { mode: 'reverse', val, unit, length: lFmt };
