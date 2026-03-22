@@ -398,15 +398,34 @@
       line-height: 1.45;
     }
 
+    /* Reset button */
+    .reset-btn {
+      display: block;
+      margin: 0.5rem auto 0;
+      background: transparent;
+      border: none;
+      color: #aaa;
+      font-size: 0.78rem;
+      font-family: 'Inter', sans-serif;
+      font-weight: 600;
+      cursor: pointer;
+      letter-spacing: 0.3px;
+      transition: color 0.15s;
+    }
+    .reset-btn:hover { color: #555; }
+
     /* Share buttons */
-    .share-row {
+    .share-grid {
       margin-top: 1rem;
-      display: flex;
-      gap: 0.6rem;
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 0.5rem;
+    }
+    .share-full {
+      grid-column: 1 / -1;
     }
     .share-btn {
-      flex: 1;
-      padding: 0.6rem 0.5rem;
+      padding: 0.55rem 0.4rem;
       border: 1.5px solid #1a1a1a;
       border-radius: 10px;
       font-family: 'Inter', sans-serif;
@@ -416,10 +435,16 @@
       transition: transform 0.1s, background 0.15s;
     }
     .share-btn:active { transform: scale(0.97); }
-    .share-btn.copy-btn { background: var(--banana); color: #1a1a1a; }
+    .share-btn.copy-btn     { background: var(--banana); color: #1a1a1a; border-color: #1a1a1a; }
     .share-btn.copy-btn:hover { background: var(--banana-dark); }
-    .share-btn.tweet-btn { background: #000; color: #fff; }
-    .share-btn.tweet-btn:hover { background: #222; }
+    .share-btn.x-btn        { background: #000; color: #fff; border-color: #000; }
+    .share-btn.x-btn:hover  { background: #222; }
+    .share-btn.threads-btn  { background: #000; color: #fff; border-color: #000; }
+    .share-btn.threads-btn:hover { background: #222; }
+    .share-btn.facebook-btn { background: #1877f2; color: #fff; border-color: #1877f2; }
+    .share-btn.facebook-btn:hover { background: #1565d8; }
+    .share-btn.whatsapp-btn { background: #25d366; color: #fff; border-color: #25d366; }
+    .share-btn.whatsapp-btn:hover { background: #1ebe5a; }
 
     /* Burst emojis on convert */
     .burst {
@@ -484,15 +509,19 @@
   </div>
 
   <button class="convert-btn" id="convertBtn" onclick="calculate()">🍌 CONVERT 🍌</button>
+  <button class="reset-btn" onclick="resetAll()">↺ Reset</button>
 
   <div class="result" id="result" aria-live="polite">
     <div class="result-headline" id="resultHeadline"></div>
     <div class="result-flavour" id="resultFlavour"></div>
     <div class="trivia" id="trivia"></div>
     <div class="divider"></div>
-    <div class="share-row">
-      <button class="share-btn copy-btn" onclick="copyLink()">📋 Copy shareable link</button>
-      <button class="share-btn tweet-btn" onclick="shareOnX()">𝕏 Share on X</button>
+    <div class="share-grid">
+      <button class="share-btn copy-btn share-full"  onclick="copyLink()">📋 Copy shareable link</button>
+      <button class="share-btn x-btn"                onclick="shareOnX()">𝕏 X</button>
+      <button class="share-btn threads-btn"          onclick="shareThreads()">@ Threads</button>
+      <button class="share-btn facebook-btn"         onclick="shareFacebook()">f Facebook</button>
+      <button class="share-btn whatsapp-btn"         onclick="shareWhatsApp()">💬 WhatsApp</button>
     </div>
   </div>
 
@@ -740,16 +769,41 @@
     });
   }
 
-  function shareOnX() {
+  function buildShareText() {
     const r = window._lastResult;
-    if (!r) return;
-    let text;
-    if (r.mode === 'forward') {
-      text = `Did you know ${r.val} ${unitLabels[r.unit]} = ${r.bananas} bananas? 🍌 Find out yours: ${location.href} #BananaForScale`;
-    } else {
-      text = `Did you know ${r.val} bananas = ${r.length} ${unitLabels[r.unit]}? 🍌 Find out yours: ${location.href} #BananaForScale`;
-    }
+    if (!r) return '';
+    return r.mode === 'forward'
+      ? `Did you know ${r.val} ${unitLabels[r.unit]} = ${r.bananas} bananas? 🍌 Find out yours: ${location.href} #BananaForScale`
+      : `Did you know ${r.val} bananas = ${r.length} ${unitLabels[r.unit]}? 🍌 Find out yours: ${location.href} #BananaForScale`;
+  }
+
+  function shareOnX() {
+    const text = buildShareText();
+    if (!text) return;
     window.open(`https://x.com/intent/tweet?text=${encodeURIComponent(text)}`, '_blank');
+  }
+
+  function shareThreads() {
+    const text = buildShareText();
+    if (!text) return;
+    window.open(`https://www.threads.net/intent/post?text=${encodeURIComponent(text)}`, '_blank');
+  }
+
+  function shareFacebook() {
+    window.open(`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(location.href)}`, '_blank');
+  }
+
+  function shareWhatsApp() {
+    const text = buildShareText();
+    if (!text) return;
+    window.open(`https://wa.me/?text=${encodeURIComponent(text)}`, '_blank');
+  }
+
+  function resetAll() {
+    document.getElementById('valueInput').value = '';
+    hideResult();
+    history.replaceState(null, '', location.pathname);
+    document.getElementById('valueInput').focus();
   }
 
   function loadFromParams() {
