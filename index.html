@@ -155,6 +155,44 @@
       color: var(--banana);
     }
 
+    /* Variety toggle */
+    .variety-toggle {
+      display: flex;
+      background: #f0ead0;
+      border: 2px solid #1a1a1a;
+      border-radius: 10px;
+      overflow: hidden;
+      margin-bottom: 1.2rem;
+    }
+    .variety-btn {
+      flex: 1;
+      padding: 0.4rem 0.3rem;
+      border: none;
+      background: transparent;
+      font-family: 'Inter', sans-serif;
+      font-size: 0.75rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background 0.15s, color 0.15s;
+      color: #666;
+      line-height: 1.3;
+      text-align: center;
+    }
+    .variety-btn .variety-size {
+      display: block;
+      font-size: 0.65rem;
+      font-weight: 400;
+      color: #999;
+      margin-top: 1px;
+    }
+    .variety-btn.active {
+      background: #1a1a1a;
+      color: var(--banana);
+    }
+    .variety-btn.active .variety-size {
+      color: #c8a800;
+    }
+
     /* Input area */
     .input-row {
       display: flex;
@@ -363,6 +401,14 @@
     <button class="mode-btn" id="modeReverse" onclick="setMode('reverse')">🍌 Bananas → 📏</button>
   </div>
 
+  <p class="mode-label">Banana variety</p>
+  <div class="variety-toggle">
+    <button class="variety-btn active" data-variety="cavendish" onclick="setVariety('cavendish')">Cavendish<span class="variety-size">7 in</span></button>
+    <button class="variety-btn" data-variety="ladyfinger" onclick="setVariety('ladyfinger')">Lady Finger<span class="variety-size">4.5 in</span></button>
+    <button class="variety-btn" data-variety="plantain" onclick="setVariety('plantain')">Plantain<span class="variety-size">10 in</span></button>
+    <button class="variety-btn" data-variety="red" onclick="setVariety('red')">Red Banana<span class="variety-size">6 in</span></button>
+  </div>
+
   <label class="input-label" id="inputLabel">Enter a length</label>
   <div class="input-row">
     <input type="number" id="valueInput" placeholder="e.g. 180" min="0" autofocus />
@@ -389,7 +435,13 @@
 </div>
 
 <script>
-  const BANANA_CM = 18;
+  const VARIETIES = {
+    cavendish:  { cm: 17.78, label: 'Cavendish' },
+    ladyfinger: { cm: 11.4,  label: 'Lady Finger' },
+    plantain:   { cm: 25.4,  label: 'Plantain' },
+    red:        { cm: 15.2,  label: 'Red Banana' },
+  };
+  let currentVariety = 'cavendish';
 
   const toCm = {
     mm: 0.1, cm: 1, m: 100, km: 100000,
@@ -501,6 +553,14 @@
     document.getElementById('result').classList.remove('visible');
   }
 
+  function setVariety(v) {
+    currentVariety = v;
+    document.querySelectorAll('.variety-btn').forEach(b =>
+      b.classList.toggle('active', b.dataset.variety === v)
+    );
+    if (document.getElementById('result').classList.contains('visible')) calculate();
+  }
+
   function makeRain() {
     const container = document.getElementById('rain');
     for (let i = 0; i < 18; i++) {
@@ -569,7 +629,7 @@
 
     if (mode === 'forward') {
       const cm = val * toCm[unit];
-      const bananas = cm / BANANA_CM;
+      const bananas = cm / VARIETIES[currentVariety].cm;
       const bFmt = fmt(Math.round(bananas * 10) / 10);
 
       document.getElementById('resultHeadline').textContent = forwardHeadlines[idx % forwardHeadlines.length](bFmt);
@@ -579,7 +639,7 @@
       history.replaceState(null, '', `?v=${val}&u=${encodeURIComponent(unit)}`);
       window._lastResult = { mode: 'forward', val, unit, bananas: bFmt };
     } else {
-      const cm = val * BANANA_CM;
+      const cm = val * VARIETIES[currentVariety].cm;
       const length = cm / toCm[unit];
       const lFmt = fmt(Math.round(length * 100) / 100);
       const headFn = reverseHeadlines[idx % reverseHeadlines.length];
