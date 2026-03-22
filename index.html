@@ -98,6 +98,36 @@
       font-weight: 400;
     }
 
+    /* Mode label */
+    .mode-label {
+      font-size: 0.78rem;
+      font-weight: 600;
+      color: #888;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin-bottom: 0.4rem;
+    }
+
+    /* Input label */
+    .input-label {
+      display: block;
+      font-size: 0.82rem;
+      font-weight: 600;
+      color: #555;
+      margin-bottom: 0.4rem;
+    }
+
+    /* Strip label */
+    .strip-label {
+      font-size: 0.78rem;
+      font-weight: 600;
+      color: #888;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin-top: 0.9rem;
+      margin-bottom: 0.3rem;
+    }
+
     /* Mode toggle */
     .mode-toggle {
       display: flex;
@@ -113,11 +143,12 @@
       border: none;
       background: transparent;
       font-family: 'Inter', sans-serif;
-      font-size: 0.82rem;
+      font-size: 0.85rem;
       font-weight: 600;
       cursor: pointer;
       transition: background 0.15s, color 0.15s;
       color: #666;
+      white-space: nowrap;
     }
     .mode-btn.active {
       background: #1a1a1a;
@@ -239,19 +270,16 @@
       color: #1a1a1a;
     }
 
-    /* Comparison badge */
-    .comparison {
+    /* Trivia box */
+    .trivia {
       margin-top: 0.8rem;
-      display: flex;
-      align-items: center;
-      gap: 0.5rem;
-      padding: 0.6rem 0.9rem;
+      padding: 0.7rem 0.9rem;
       background: #fff9e0;
       border: 2px solid #1a1a1a;
       border-radius: 10px;
-      font-size: 0.9rem;
-      font-weight: 600;
-      color: #1a1a1a;
+      font-size: 0.85rem;
+      color: #444;
+      line-height: 1.4;
     }
 
     /* Share buttons */
@@ -316,13 +344,15 @@
     <p class="subtitle">The world's most important unit of measurement</p>
   </div>
 
+  <p class="mode-label">What are you converting?</p>
   <div class="mode-toggle">
-    <button class="mode-btn active" id="modeForward" onclick="setMode('forward')">📏 Length → Bananas</button>
-    <button class="mode-btn" id="modeReverse" onclick="setMode('reverse')">🍌 Bananas → Length</button>
+    <button class="mode-btn active" id="modeForward" onclick="setMode('forward')">📏 To Bananas</button>
+    <button class="mode-btn" id="modeReverse" onclick="setMode('reverse')">🍌 To Length</button>
   </div>
 
+  <label class="input-label" id="inputLabel">Enter a length</label>
   <div class="input-row">
-    <input type="number" id="valueInput" placeholder="Enter a length..." min="0" autofocus />
+    <input type="number" id="valueInput" placeholder="e.g. 180" min="0" autofocus />
     <select id="unitSelect"></select>
   </div>
 
@@ -331,8 +361,9 @@
   <div class="result" id="result" aria-live="polite">
     <div class="result-headline" id="resultHeadline"></div>
     <div class="result-flavour" id="resultFlavour"></div>
+    <p class="strip-label" id="stripLabel">Visualised:</p>
     <div class="banana-strip" id="bananaStrip"></div>
-    <div class="comparison" id="comparison"></div>
+    <div class="trivia" id="trivia"></div>
     <div class="divider"></div>
     <div class="share-row">
       <button class="share-btn copy-btn" onclick="copyLink()">📋 Copy shareable link</button>
@@ -391,29 +422,38 @@
     'Precision guaranteed to within half a peel.',
   ];
 
+  const reverseFlavour = [
+    'Lay them end to end. Go on.',
+    "That's a lot of bananas.",
+    'The Banana Council has verified this.',
+    'Results may vary by banana curvature.',
+    "Don't ask how we know this.",
+    'Certified banana-to-metric conversion.',
+    'Please do not actually buy this many bananas.',
+    'Banana maths is still maths.',
+  ];
+
+  const trivia = [
+    'A banana grows pointing upward — it\'s called negative geotropism.',
+    'Bananas are technically berries. Strawberries are not.',
+    'The average banana is 18–20 cm long. We use 18 cm here. Science.',
+    'Humans share about 50% of their DNA with bananas.',
+    'A cluster of bananas is called a hand. One banana is a finger.',
+    'Bananas float in water. Most fruits don\'t.',
+    'There are over 1,000 banana varieties. You\'ve probably only tried one.',
+    'The inside of a banana peel can soothe insect bites.',
+    'Bananas ripen faster in a bunch than when separated.',
+    'A ripe banana glows blue under UV light.',
+    'The Cavendish (the banana you eat) is a clone. Every single one is genetically identical.',
+    'Bananas are slightly radioactive due to potassium-40.',
+  ];
+
   const reverseHeadlines = [
     (n, u, v) => `${n} bananas = about ${v} ${u} 📏`,
     (n, u, v) => `Lay ${n} bananas end-to-end: that's ${v} ${u} 🍌`,
     (n, u, v) => `Science translates ${n} bananas into ${v} ${u} 🔬`,
     (n, u, v) => `${n} bananas. That's ${v} ${u}. Wild. 🤯`,
     (n, u, v) => `${v} ${u} — or as experts say: ${n} bananas 🎓`,
-  ];
-
-  const comparisons = [
-    { max: 0.5,    text: 'shorter than a mouse 🐭' },
-    { max: 1,      text: 'about hamster-sized 🐹' },
-    { max: 3,      text: 'roughly a phone length 📱' },
-    { max: 6,      text: 'about the length of a shoe 👟' },
-    { max: 15,     text: 'roughly a guitar 🎸' },
-    { max: 30,     text: 'close to a door height 🚪' },
-    { max: 60,     text: 'about a king-sized bed 🛏️' },
-    { max: 120,    text: 'nearly a double-decker bus 🚌' },
-    { max: 300,    text: 'getting into airplane territory ✈️' },
-    { max: 600,    text: 'blue whale territory 🐋' },
-    { max: 2000,   text: 'multiple football pitches ⚽' },
-    { max: 10000,  text: 'Eiffel Tower range 🗼' },
-    { max: 100000, text: 'mountain-sized 🏔️' },
-    { max: Infinity, text: 'you absolute unit 🌍' },
   ];
 
   let mode = 'forward';
@@ -433,8 +473,10 @@
     mode = m;
     document.getElementById('modeForward').classList.toggle('active', m === 'forward');
     document.getElementById('modeReverse').classList.toggle('active', m === 'reverse');
-    document.getElementById('valueInput').placeholder = m === 'forward' ? 'Enter a length...' : 'Enter bananas...';
+    document.getElementById('inputLabel').textContent = m === 'forward' ? 'Enter a length' : 'How many bananas?';
+    document.getElementById('valueInput').placeholder = m === 'forward' ? 'e.g. 180' : 'e.g. 10';
     document.getElementById('convertBtn').textContent = m === 'forward' ? '🍌 CONVERT 🍌' : '📏 TO LENGTH 📏';
+    document.getElementById('stripLabel').textContent = m === 'forward' ? 'Visualised:' : "That's:";
     hideResult();
   }
 
@@ -498,13 +540,6 @@
     }
   }
 
-  function getComparison(bananas) {
-    for (const c of comparisons) {
-      if (bananas < c.max) return c.text;
-    }
-    return '🌍 you absolute unit';
-  }
-
   function calculate() {
     const val = parseFloat(document.getElementById('valueInput').value);
     const unit = document.getElementById('unitSelect').value;
@@ -512,7 +547,8 @@
 
     burst();
 
-    const idx = Math.floor(Math.random() * flavour.length);
+    const idx = Math.floor(Math.random() * 12);
+    const triviaText = trivia[idx % trivia.length];
 
     if (mode === 'forward') {
       const cm = val * toCm[unit];
@@ -520,9 +556,9 @@
       const bFmt = fmt(Math.round(bananas * 10) / 10);
 
       document.getElementById('resultHeadline').textContent = forwardHeadlines[idx % forwardHeadlines.length](bFmt);
-      document.getElementById('resultFlavour').textContent = flavour[idx];
+      document.getElementById('resultFlavour').textContent = flavour[idx % flavour.length];
       renderStrip(bananas);
-      document.getElementById('comparison').textContent = getComparison(bananas);
+      document.getElementById('trivia').textContent = triviaText;
       history.replaceState(null, '', `?v=${val}&u=${encodeURIComponent(unit)}`);
       window._lastResult = { mode: 'forward', val, unit, bananas: bFmt };
     } else {
@@ -532,9 +568,9 @@
       const headFn = reverseHeadlines[idx % reverseHeadlines.length];
 
       document.getElementById('resultHeadline').textContent = headFn(fmt(val), unitLabels[unit], lFmt);
-      document.getElementById('resultFlavour').textContent = flavour[idx];
+      document.getElementById('resultFlavour').textContent = reverseFlavour[idx % reverseFlavour.length];
       document.getElementById('bananaStrip').innerHTML = `<span class="banana-big">📏 ${lFmt} ${unitLabels[unit]}</span>`;
-      document.getElementById('comparison').textContent = getComparison(val);
+      document.getElementById('trivia').textContent = triviaText;
       history.replaceState(null, '', `?v=${val}&u=${encodeURIComponent(unit)}&m=r`);
       window._lastResult = { mode: 'reverse', val, unit, length: lFmt };
     }
