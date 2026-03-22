@@ -3,294 +3,583 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Banana for Scale Calculator</title>
+  <title>🍌 Banana for Scale</title>
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🍌</text></svg>" />
+  <link href="https://fonts.googleapis.com/css2?family=Bangers&family=Inter:wght@400;600;700&display=swap" rel="stylesheet" />
   <style>
-    /* ── Reset & base ── */
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
+    :root {
+      --banana: #f5c518;
+      --banana-dark: #e6a800;
+      --banana-light: #fff9e6;
+      --text: #1a1a1a;
+      --card: #fffef5;
+    }
+
     body {
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
-      background: #fafaf8;
-      color: #1a1a1a;
       min-height: 100vh;
       display: flex;
+      flex-direction: column;
       align-items: center;
       justify-content: center;
-      padding: 24px 16px;
+      padding: 1rem;
+      font-family: 'Inter', sans-serif;
+      background: #f5c518;
+      animation: bgPulse 6s ease-in-out infinite alternate;
+      overflow-x: hidden;
+      position: relative;
     }
 
-    /* ── Card ── */
+    @keyframes bgPulse {
+      0%   { background: #f5c518; }
+      33%  { background: #ffda44; }
+      66%  { background: #f0b800; }
+      100% { background: #ffe066; }
+    }
+
+    /* Falling bananas background */
+    .banana-rain { position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; overflow: hidden; z-index: 0; }
+    .raindrop {
+      position: absolute;
+      top: -60px;
+      font-size: 1.6rem;
+      animation: fall linear infinite;
+      opacity: 0.35;
+      user-select: none;
+    }
+    @keyframes fall {
+      0%   { transform: translateY(-60px) rotate(0deg); opacity: 0.35; }
+      100% { transform: translateY(110vh) rotate(360deg); opacity: 0.1; }
+    }
+
+    /* Card */
     .card {
-      background: #ffffff;
+      position: relative;
+      z-index: 1;
+      background: var(--card);
+      border: 3px solid #1a1a1a;
       border-radius: 20px;
-      box-shadow: 0 4px 24px rgba(0,0,0,0.08), 0 1px 4px rgba(0,0,0,0.04);
-      padding: 40px 36px 36px;
+      padding: 2rem 2rem 1.8rem;
       width: 100%;
-      max-width: 480px;
+      max-width: 520px;
+      box-shadow: 6px 6px 0 #1a1a1a;
+      animation: cardLand 0.5s cubic-bezier(.22,1.8,.36,1) both;
+    }
+    @keyframes cardLand {
+      from { transform: translateY(-40px) rotate(-3deg); opacity: 0; }
+      to   { transform: translateY(0) rotate(0deg); opacity: 1; }
     }
 
-    /* ── Header ── */
-    .card-header {
-      text-align: center;
-      margin-bottom: 32px;
+    /* Header */
+    .header { text-align: center; margin-bottom: 1.6rem; }
+    .banana-icon {
+      font-size: 3.5rem;
+      display: inline-block;
+      animation: bananaBounce 1.4s ease-in-out infinite;
+      line-height: 1;
     }
-
-    .card-title {
-      font-size: 1.75rem;
-      font-weight: 700;
-      letter-spacing: -0.02em;
-      line-height: 1.2;
+    @keyframes bananaBounce {
+      0%, 100% { transform: translateY(0) rotate(-10deg); }
+      50%       { transform: translateY(-10px) rotate(10deg); }
     }
-
-    .card-sub {
-      margin-top: 6px;
+    h1 {
+      font-family: 'Bangers', cursive;
+      font-size: 2.8rem;
+      letter-spacing: 2px;
+      color: #1a1a1a;
+      line-height: 1.1;
+      margin-top: 0.2rem;
+    }
+    .subtitle {
       font-size: 0.95rem;
-      color: #6b6b6b;
+      color: #555;
+      margin-top: 0.3rem;
+      font-weight: 400;
     }
 
-    /* ── Input row ── */
+    /* Mode toggle */
+    .mode-toggle {
+      display: flex;
+      background: #f0ead0;
+      border: 2px solid #1a1a1a;
+      border-radius: 10px;
+      overflow: hidden;
+      margin-bottom: 1.2rem;
+    }
+    .mode-btn {
+      flex: 1;
+      padding: 0.55rem 0.5rem;
+      border: none;
+      background: transparent;
+      font-family: 'Inter', sans-serif;
+      font-size: 0.82rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background 0.15s, color 0.15s;
+      color: #666;
+    }
+    .mode-btn.active {
+      background: #1a1a1a;
+      color: var(--banana);
+    }
+
+    /* Input area */
     .input-row {
       display: flex;
-      gap: 10px;
-      margin-bottom: 14px;
+      gap: 0.6rem;
+      margin-bottom: 0.9rem;
     }
-
-    input[type="number"] {
+    input[type=number] {
       flex: 1;
-      padding: 14px 16px;
-      font-size: 1.05rem;
-      font-family: inherit;
-      border: 1.5px solid #e0e0e0;
-      border-radius: 12px;
+      padding: 0.75rem 0.9rem;
+      border: 2px solid #1a1a1a;
+      border-radius: 10px;
+      font-size: 1.1rem;
+      font-family: 'Inter', sans-serif;
+      background: #fff;
+      color: var(--text);
       outline: none;
-      transition: border-color 0.18s;
-      background: #fafaf8;
+      transition: border-color 0.15s, box-shadow 0.15s;
+      min-width: 0;
       -moz-appearance: textfield;
     }
-
-    input[type="number"]::-webkit-outer-spin-button,
-    input[type="number"]::-webkit-inner-spin-button { -webkit-appearance: none; }
-
-    input[type="number"]:focus { border-color: #f5c518; background: #fff; }
+    input[type=number]::-webkit-inner-spin-button,
+    input[type=number]::-webkit-outer-spin-button { -webkit-appearance: none; }
+    input[type=number]:focus { border-color: var(--banana-dark); box-shadow: 0 0 0 3px rgba(245,197,24,0.3); }
 
     select {
-      padding: 14px 12px;
-      font-size: 1rem;
-      font-family: inherit;
-      border: 1.5px solid #e0e0e0;
-      border-radius: 12px;
-      outline: none;
-      background: #fafaf8;
-      cursor: pointer;
-      transition: border-color 0.18s;
-      appearance: none;
-      -webkit-appearance: none;
-      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%236b6b6b' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
-      background-repeat: no-repeat;
-      background-position: right 12px center;
-      padding-right: 34px;
-    }
-
-    select:focus { border-color: #f5c518; }
-
-    /* ── Button ── */
-    button {
-      width: 100%;
-      padding: 15px;
-      font-size: 1rem;
-      font-weight: 600;
-      font-family: inherit;
-      background: #f5c518;
-      color: #1a1a1a;
-      border: none;
-      border-radius: 12px;
-      cursor: pointer;
-      transition: background 0.18s, transform 0.1s;
-      letter-spacing: 0.01em;
-    }
-
-    button:hover { background: #e6b800; }
-    button:active { transform: scale(0.97); background: #d4a900; }
-
-    /* ── Result section ── */
-    .result {
-      margin-top: 28px;
-      text-align: center;
-      opacity: 0;
-      transform: translateY(10px);
-      transition: opacity 0.3s ease, transform 0.3s ease;
-      pointer-events: none;
-    }
-
-    .result.visible {
-      opacity: 1;
-      transform: translateY(0);
-      pointer-events: auto;
-    }
-
-    .result-main {
-      font-size: 1.35rem;
-      font-weight: 700;
-      line-height: 1.3;
-      letter-spacing: -0.01em;
-    }
-
-    .result-flavour {
-      margin-top: 6px;
-      font-size: 0.9rem;
-      color: #6b6b6b;
-    }
-
-    /* ── Banana visual strip ── */
-    .banana-strip {
-      margin-top: 18px;
-      font-size: 1.6rem;
-      line-height: 1.5;
-      word-break: break-word;
-      min-height: 2.4rem;
-    }
-
-    .banana-count {
-      display: inline-block;
-      background: #fffbea;
-      border: 1.5px solid #f5c518;
+      padding: 0.75rem 0.6rem;
+      border: 2px solid #1a1a1a;
       border-radius: 10px;
-      padding: 6px 16px;
-      font-size: 1.15rem;
+      font-size: 0.9rem;
+      font-family: 'Inter', sans-serif;
+      background: #fff;
+      color: var(--text);
+      outline: none;
+      cursor: pointer;
       font-weight: 600;
+      transition: border-color 0.15s;
+      max-width: 140px;
+    }
+    select:focus { border-color: var(--banana-dark); }
+
+    /* Convert button */
+    .convert-btn {
+      width: 100%;
+      padding: 0.9rem;
+      background: #1a1a1a;
+      color: var(--banana);
+      border: 2px solid #1a1a1a;
+      border-radius: 10px;
+      font-family: 'Bangers', cursive;
+      font-size: 1.4rem;
+      letter-spacing: 2px;
+      cursor: pointer;
+      transition: transform 0.1s, box-shadow 0.1s, background 0.15s;
+      box-shadow: 3px 3px 0 var(--banana-dark);
+      position: relative;
+      overflow: hidden;
+    }
+    .convert-btn:hover { background: #333; }
+    .convert-btn:active { transform: translate(2px, 2px); box-shadow: 1px 1px 0 var(--banana-dark); }
+    .convert-btn::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(90deg, transparent 0%, rgba(255,255,255,0.08) 50%, transparent 100%);
+      transform: translateX(-100%);
+      animation: shimmer 2.5s ease-in-out infinite;
+    }
+    @keyframes shimmer {
+      0%   { transform: translateX(-100%); }
+      60%  { transform: translateX(100%); }
+      100% { transform: translateX(100%); }
     }
 
-    /* ── Divider ── */
+    /* Result */
+    .result {
+      margin-top: 1.4rem;
+      opacity: 0;
+      transform: translateY(12px);
+      transition: opacity 0.3s ease, transform 0.3s ease;
+    }
+    .result.visible { opacity: 1; transform: translateY(0); }
+
+    .result-headline {
+      font-family: 'Bangers', cursive;
+      font-size: 1.9rem;
+      letter-spacing: 1.5px;
+      color: #1a1a1a;
+      line-height: 1.2;
+    }
+    .result-flavour {
+      font-size: 0.88rem;
+      color: #777;
+      margin-top: 0.25rem;
+      font-style: italic;
+    }
+    .banana-strip {
+      margin-top: 0.9rem;
+      padding: 0.75rem;
+      background: var(--banana-light);
+      border: 2px solid #1a1a1a;
+      border-radius: 10px;
+      font-size: 1.5rem;
+      line-height: 1.5;
+      word-break: break-all;
+      min-height: 3rem;
+      display: flex;
+      align-items: center;
+    }
+    .banana-big {
+      font-family: 'Bangers', cursive;
+      font-size: 1.3rem;
+      letter-spacing: 1px;
+      color: #1a1a1a;
+    }
+
+    /* Comparison badge */
+    .comparison {
+      margin-top: 0.8rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.6rem 0.9rem;
+      background: #fff9e0;
+      border: 2px solid #1a1a1a;
+      border-radius: 10px;
+      font-size: 0.9rem;
+      font-weight: 600;
+      color: #1a1a1a;
+    }
+
+    /* Share buttons */
+    .share-row {
+      margin-top: 1rem;
+      display: flex;
+      gap: 0.6rem;
+    }
+    .share-btn {
+      flex: 1;
+      padding: 0.6rem 0.5rem;
+      border: 2px solid #1a1a1a;
+      border-radius: 10px;
+      font-family: 'Inter', sans-serif;
+      font-size: 0.82rem;
+      font-weight: 700;
+      cursor: pointer;
+      transition: transform 0.1s, background 0.15s;
+    }
+    .share-btn:active { transform: scale(0.97); }
+    .share-btn.copy-btn { background: var(--banana); color: #1a1a1a; }
+    .share-btn.copy-btn:hover { background: var(--banana-dark); }
+    .share-btn.tweet-btn { background: #000; color: #fff; }
+    .share-btn.tweet-btn:hover { background: #222; }
+
+    /* Burst emojis on convert */
+    .burst {
+      position: fixed;
+      pointer-events: none;
+      z-index: 999;
+      font-size: 1.8rem;
+      animation: burstFly 0.9s ease-out forwards;
+    }
+    @keyframes burstFly {
+      0%   { transform: translate(0,0) scale(1); opacity: 1; }
+      100% { transform: translate(var(--dx), var(--dy)) scale(0.3); opacity: 0; }
+    }
+
+    /* Divider */
     .divider {
-      border: none;
-      border-top: 1px solid #efefef;
-      margin: 24px 0 0;
+      height: 2px;
+      background: repeating-linear-gradient(90deg, #1a1a1a 0 8px, transparent 8px 16px);
+      margin: 1.4rem 0;
+      opacity: 0.15;
     }
 
-    /* ── Mobile ── */
     @media (max-width: 400px) {
-      .card { padding: 28px 20px 24px; }
-      .card-title { font-size: 1.5rem; }
-      .result-main { font-size: 1.15rem; }
+      h1 { font-size: 2.2rem; }
+      .card { padding: 1.4rem 1.2rem; }
+      .result-headline { font-size: 1.5rem; }
     }
   </style>
 </head>
 <body>
 
+<div class="banana-rain" id="rain"></div>
+
 <div class="card">
-
-  <!-- Header -->
-  <div class="card-header">
-    <div class="card-title">🍌 Banana for Scale</div>
-    <div class="card-sub">How long is that, in bananas?</div>
+  <div class="header">
+    <span class="banana-icon">🍌</span>
+    <h1>Banana for Scale</h1>
+    <p class="subtitle">The world's most important unit of measurement</p>
   </div>
 
-  <!-- Input row: number + unit -->
+  <div class="mode-toggle">
+    <button class="mode-btn active" id="modeForward" onclick="setMode('forward')">📏 Length → Bananas</button>
+    <button class="mode-btn" id="modeReverse" onclick="setMode('reverse')">🍌 Bananas → Length</button>
+  </div>
+
   <div class="input-row">
-    <input
-      type="number"
-      id="lengthInput"
-      placeholder="Enter length..."
-      min="0"
-      step="any"
-      autofocus
-    />
-    <select id="unitSelect">
-      <option value="cm" selected>cm</option>
-      <option value="mm">mm</option>
-      <option value="m">m</option>
-      <option value="in">in</option>
-      <option value="ft">ft</option>
-    </select>
+    <input type="number" id="valueInput" placeholder="Enter a length..." min="0" autofocus />
+    <select id="unitSelect"></select>
   </div>
 
-  <!-- Convert button -->
-  <button id="convertBtn">Convert to bananas</button>
+  <button class="convert-btn" id="convertBtn" onclick="calculate()">🍌 CONVERT 🍌</button>
 
-  <!-- Result (hidden until calculated) -->
   <div class="result" id="result" aria-live="polite">
-    <hr class="divider" />
-    <div class="result-main" id="resultMain"></div>
+    <div class="result-headline" id="resultHeadline"></div>
     <div class="result-flavour" id="resultFlavour"></div>
     <div class="banana-strip" id="bananaStrip"></div>
+    <div class="comparison" id="comparison"></div>
+    <div class="divider"></div>
+    <div class="share-row">
+      <button class="share-btn copy-btn" onclick="copyLink()">📋 Copy shareable link</button>
+      <button class="share-btn tweet-btn" onclick="shareOnX()">𝕏 Share on X</button>
+    </div>
   </div>
-
 </div>
 
 <script>
-  // ── Conversion table: unit → cm ──
-  const toCm = { cm: 1, mm: 0.1, m: 100, in: 2.54, ft: 30.48 };
-
-  // One banana ≈ 18 cm (the internet standard)
   const BANANA_CM = 18;
 
-  // ── Phrasing banks ──
-  const headlines = [
+  const toCm = {
+    mm: 0.1, cm: 1, m: 100, km: 100000,
+    in: 2.54, ft: 30.48, yd: 91.44,
+    miles: 160934.4, nmi: 185200,
+    'light-yr': 9.461e17,
+    eiffel: 32400,
+    football: 10500
+  };
+
+  const unitLabels = {
+    mm: 'mm', cm: 'cm', m: 'm', km: 'km',
+    in: 'inches', ft: 'feet', yd: 'yards',
+    miles: 'miles', nmi: 'nautical miles',
+    'light-yr': 'light-years',
+    eiffel: 'Eiffel Towers', football: 'football pitches'
+  };
+
+  const forwardHeadlines = [
     n => `That's about ${n} bananas long 🍌`,
     n => `You're looking at roughly ${n} bananas 🍌`,
     n => `${n} bananas. No, really. 🍌`,
     n => `Approximately ${n} banana-lengths 🍌`,
     n => `Science says: ${n} bananas 🍌`,
+    n => `BREAKING: Scientists confirm ${n} bananas 📰`,
+    n => `${n} bananas. This is not a drill. 🚨`,
+    n => `The ancient Egyptians measured this as ${n} bananas 🏺`,
+    n => `Experts agree: ${n} bananas 🎓`,
+    n => `${n} bananas (peer-reviewed) 📊`,
+    n => `A bold ${n} bananas 💪`,
+    n => `Certified organic: ${n} bananas 🌿`,
   ];
 
-  const flavours = [
-    "Give or take a peel.",
-    "Roughly a small bunch and a bit.",
+  const flavour = [
+    'Give or take a peel.',
+    'Roughly a small bunch and a bit.',
     "The internet's most trusted unit of measurement.",
-    "Scientists hate this one weird trick.",
-    "Results may vary depending on banana curvature.",
+    'Scientists hate this one weird trick.',
+    'Results may vary depending on banana curvature.',
+    'We accept no liability for banana-related injuries.',
+    'Certified organic measurement.',
+    'No bananas were harmed in this calculation.',
+    'Your mileage may vary (in bananas).',
+    'Ask your doctor before measuring in bananas.',
+    'This message was approved by the Banana Council.',
+    'Precision guaranteed to within half a peel.',
   ];
 
-  // ── Render banana strip ──
-  function renderStrip(bananas) {
-    const strip = document.getElementById('bananaStrip');
-    const whole = Math.round(bananas);
+  const reverseHeadlines = [
+    (n, u, v) => `${n} bananas = about ${v} ${u} 📏`,
+    (n, u, v) => `Lay ${n} bananas end-to-end: that's ${v} ${u} 🍌`,
+    (n, u, v) => `Science translates ${n} bananas into ${v} ${u} 🔬`,
+    (n, u, v) => `${n} bananas. That's ${v} ${u}. Wild. 🤯`,
+    (n, u, v) => `${v} ${u} — or as experts say: ${n} bananas 🎓`,
+  ];
 
-    if (whole === 0) {
-      strip.innerHTML = '<span class="banana-count">Less than one banana 🍌</span>';
-    } else if (whole <= 20) {
-      strip.textContent = '🍌'.repeat(whole);
-    } else {
-      strip.innerHTML = `<span class="banana-count">🍌 × ${whole.toLocaleString()}</span>`;
-    }
-  }
+  const comparisons = [
+    { max: 0.5,    text: 'shorter than a mouse 🐭' },
+    { max: 1,      text: 'about hamster-sized 🐹' },
+    { max: 3,      text: 'roughly a phone length 📱' },
+    { max: 6,      text: 'about the length of a shoe 👟' },
+    { max: 15,     text: 'roughly a guitar 🎸' },
+    { max: 30,     text: 'close to a door height 🚪' },
+    { max: 60,     text: 'about a king-sized bed 🛏️' },
+    { max: 120,    text: 'nearly a double-decker bus 🚌' },
+    { max: 300,    text: 'getting into airplane territory ✈️' },
+    { max: 600,    text: 'blue whale territory 🐋' },
+    { max: 2000,   text: 'multiple football pitches ⚽' },
+    { max: 10000,  text: 'Eiffel Tower range 🗼' },
+    { max: 100000, text: 'mountain-sized 🏔️' },
+    { max: Infinity, text: 'you absolute unit 🌍' },
+  ];
 
-  // ── Main calculate function ──
-  function calculate() {
-    const raw = parseFloat(document.getElementById('lengthInput').value);
-    const unit = document.getElementById('unitSelect').value;
-    const resultEl = document.getElementById('result');
+  let mode = 'forward';
 
-    // Guard: no input or non-positive
-    if (isNaN(raw) || raw <= 0) {
-      resultEl.classList.remove('visible');
-      return;
-    }
-
-    const cm = raw * toCm[unit];
-    const bananas = parseFloat((cm / BANANA_CM).toFixed(1));
-
-    // Pick random phrasing (feels fresh on repeat use)
-    const idx = Math.floor(Math.random() * headlines.length);
-    document.getElementById('resultMain').textContent = headlines[idx](bananas);
-    document.getElementById('resultFlavour').textContent = flavours[idx];
-
-    renderStrip(bananas);
-
-    // Animate result in (re-trigger by toggling)
-    resultEl.classList.remove('visible');
-    requestAnimationFrame(() => {
-      requestAnimationFrame(() => resultEl.classList.add('visible'));
+  function buildUnits() {
+    const sel = document.getElementById('unitSelect');
+    sel.innerHTML = '';
+    Object.entries(unitLabels).forEach(([k, v]) => {
+      const o = document.createElement('option');
+      o.value = k; o.textContent = v;
+      if (k === 'cm') o.selected = true;
+      sel.appendChild(o);
     });
   }
 
-  // ── Event listeners ──
-  document.getElementById('convertBtn').addEventListener('click', calculate);
+  function setMode(m) {
+    mode = m;
+    document.getElementById('modeForward').classList.toggle('active', m === 'forward');
+    document.getElementById('modeReverse').classList.toggle('active', m === 'reverse');
+    document.getElementById('valueInput').placeholder = m === 'forward' ? 'Enter a length...' : 'Enter bananas...';
+    document.getElementById('convertBtn').textContent = m === 'forward' ? '🍌 CONVERT 🍌' : '📏 TO LENGTH 📏';
+    hideResult();
+  }
 
-  document.getElementById('lengthInput').addEventListener('keydown', e => {
-    if (e.key === 'Enter') calculate();
-  });
+  function hideResult() {
+    document.getElementById('result').classList.remove('visible');
+  }
+
+  function makeRain() {
+    const container = document.getElementById('rain');
+    for (let i = 0; i < 18; i++) {
+      const d = document.createElement('div');
+      d.className = 'raindrop';
+      d.textContent = '🍌';
+      d.style.left = `${Math.random() * 100}%`;
+      d.style.animationDuration = `${4 + Math.random() * 8}s`;
+      d.style.animationDelay = `${-Math.random() * 10}s`;
+      d.style.fontSize = `${1 + Math.random() * 1.5}rem`;
+      container.appendChild(d);
+    }
+  }
+
+  function burst() {
+    const btn = document.getElementById('convertBtn');
+    const rect = btn.getBoundingClientRect();
+    const cx = rect.left + rect.width / 2;
+    const cy = rect.top + rect.height / 2;
+    for (let i = 0; i < 10; i++) {
+      const el = document.createElement('div');
+      el.className = 'burst';
+      el.textContent = '🍌';
+      const angle = (Math.PI * 2 * i) / 10;
+      const dist = 80 + Math.random() * 80;
+      el.style.left = cx + 'px';
+      el.style.top = cy + 'px';
+      el.style.setProperty('--dx', `${Math.cos(angle) * dist}px`);
+      el.style.setProperty('--dy', `${Math.sin(angle) * dist}px`);
+      el.style.animationDelay = `${Math.random() * 0.15}s`;
+      document.body.appendChild(el);
+      el.addEventListener('animationend', () => el.remove());
+    }
+  }
+
+  function fmt(n) {
+    if (n >= 1e15) return n.toExponential(2);
+    if (n >= 1000) return Math.round(n).toLocaleString();
+    if (n % 1 === 0) return n.toString();
+    return n.toFixed(n < 10 ? 2 : 1);
+  }
+
+  function randomPick(arr) { return arr[Math.floor(Math.random() * arr.length)]; }
+
+  function renderStrip(bananas) {
+    const strip = document.getElementById('bananaStrip');
+    const n = Math.round(bananas);
+    if (bananas < 1) {
+      strip.innerHTML = '<span style="font-size:1rem;font-weight:600;color:#888">Less than one banana 🍌</span>';
+    } else if (n <= 30) {
+      strip.textContent = '🍌'.repeat(n);
+    } else {
+      strip.innerHTML = `<span class="banana-big">🍌 × ${n.toLocaleString()}</span>`;
+    }
+  }
+
+  function getComparison(bananas) {
+    for (const c of comparisons) {
+      if (bananas < c.max) return c.text;
+    }
+    return '🌍 you absolute unit';
+  }
+
+  function calculate() {
+    const val = parseFloat(document.getElementById('valueInput').value);
+    const unit = document.getElementById('unitSelect').value;
+    if (!val || val <= 0) { hideResult(); return; }
+
+    burst();
+
+    const idx = Math.floor(Math.random() * flavour.length);
+
+    if (mode === 'forward') {
+      const cm = val * toCm[unit];
+      const bananas = cm / BANANA_CM;
+      const bFmt = fmt(Math.round(bananas * 10) / 10);
+
+      document.getElementById('resultHeadline').textContent = forwardHeadlines[idx % forwardHeadlines.length](bFmt);
+      document.getElementById('resultFlavour').textContent = flavour[idx];
+      renderStrip(bananas);
+      document.getElementById('comparison').textContent = getComparison(bananas);
+      history.replaceState(null, '', `?v=${val}&u=${encodeURIComponent(unit)}`);
+      window._lastResult = { mode: 'forward', val, unit, bananas: bFmt };
+    } else {
+      const cm = val * BANANA_CM;
+      const length = cm / toCm[unit];
+      const lFmt = fmt(Math.round(length * 100) / 100);
+      const headFn = reverseHeadlines[idx % reverseHeadlines.length];
+
+      document.getElementById('resultHeadline').textContent = headFn(fmt(val), unitLabels[unit], lFmt);
+      document.getElementById('resultFlavour').textContent = flavour[idx];
+      document.getElementById('bananaStrip').innerHTML = `<span class="banana-big">📏 ${lFmt} ${unitLabels[unit]}</span>`;
+      document.getElementById('comparison').textContent = getComparison(val);
+      history.replaceState(null, '', `?v=${val}&u=${encodeURIComponent(unit)}&m=r`);
+      window._lastResult = { mode: 'reverse', val, unit, length: lFmt };
+    }
+
+    const result = document.getElementById('result');
+    result.classList.remove('visible');
+    requestAnimationFrame(() => requestAnimationFrame(() => result.classList.add('visible')));
+  }
+
+  function copyLink() {
+    navigator.clipboard.writeText(location.href).then(() => {
+      const btn = document.querySelector('.copy-btn');
+      const orig = btn.textContent;
+      btn.textContent = 'Copied! 🍌';
+      setTimeout(() => btn.textContent = orig, 2000);
+    });
+  }
+
+  function shareOnX() {
+    const r = window._lastResult;
+    if (!r) return;
+    let text;
+    if (r.mode === 'forward') {
+      text = `Did you know ${r.val} ${unitLabels[r.unit]} = ${r.bananas} bananas? 🍌 Find out yours: ${location.href} #BananaForScale`;
+    } else {
+      text = `Did you know ${r.val} bananas = ${r.length} ${unitLabels[r.unit]}? 🍌 Find out yours: ${location.href} #BananaForScale`;
+    }
+    window.open(`https://x.com/intent/tweet?text=${encodeURIComponent(text)}`, '_blank');
+  }
+
+  function loadFromParams() {
+    const p = new URLSearchParams(location.search);
+    const v = p.get('v'), u = p.get('u'), m = p.get('m');
+    if (v && u && toCm[u]) {
+      if (m === 'r') setMode('reverse');
+      document.getElementById('valueInput').value = v;
+      document.getElementById('unitSelect').value = u;
+      calculate();
+    }
+  }
+
+  makeRain();
+  buildUnits();
+  document.getElementById('valueInput').addEventListener('keydown', e => { if (e.key === 'Enter') calculate(); });
+  loadFromParams();
 </script>
-
 </body>
 </html>
